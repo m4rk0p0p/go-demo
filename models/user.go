@@ -48,7 +48,7 @@ func UpdateUser(usr User) (User, error) {
 			return usr, nil
 		}
 	}
-	return User{}, fmt.Errorf("User with ID '%v' could not be updated", id)
+	return User{}, fmt.Errorf("User with ID '%v' could not be updated", usr.Id)
 }
 
 func RemoveUserById(id int) error {
