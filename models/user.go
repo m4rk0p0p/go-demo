@@ -16,7 +16,7 @@ var (
 	nextId = 1
 )
 
-func GetUser() []*User {
+func GetUsers() []*User {
 	return users
 }
 

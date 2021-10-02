@@ -22,6 +22,10 @@ func (ctl UserCtl) ServeHTTP(writer http.ResponseWriter, request *http.Request) 
 	writer.Write([]byte("Response from user controller"))
 }
 
+func (ctl *UserCtl) getAll(writer http.ResponseWriter, request *http.Request) {
+	encodeResponseAsJSON(models.GetUsers(), writer)
+}
+
 func (ctl *UserCtl) get(id int, writer http.ResponseWriter) {
 	usr, err := models.GetUserById(id)
 	if err != nil {
