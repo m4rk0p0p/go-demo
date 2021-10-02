@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"regexp"
+	"strconv"
 
 	"github.com/m4rk0p0p/go-demo/models"
 )
@@ -19,7 +20,40 @@ func newUserCtl() *UserCtl {
 }
 
 func (ctl UserCtl) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	writer.Write([]byte("Response from user controller"))
+	if request.URL.Path == "/users" {
+		switch request.Method {
+		case http.MethodGet:
+			ctl.getAll(writer, request)
+		case http.MethodPost:
+			ctl.post(writer, request)
+		default:
+			writer.WriteHeader(http.StatusNotImplemented)
+		}
+	} else {
+		matches := ctl.userIdPattern.FindStringSubmatch(request.URL.Path)
+		// Check if regex is matched at all
+		if len(matches) == 0 {
+			writer.WriteHeader(http.StatusNotFound)
+			return
+		}
+
+		// Try to get the user id from the appropriate subgroup match
+		id, err := strconv.Atoi(matches[1])
+		if err != nil {
+			writer.WriteHeader(http.StatusNotFound)
+		}
+
+		switch request.Method {
+		case http.MethodGet:
+			ctl.get(id, writer)
+		case http.MethodPut:
+			ctl.put(id, writer, request)
+		case http.MethodDelete:
+			ctl.delete(id, writer)
+		default:
+			writer.WriteHeader(http.StatusNotImplemented)
+		}
+	}
 }
 
 func (ctl *UserCtl) getAll(writer http.ResponseWriter, request *http.Request) {
